@@ -1,11 +1,11 @@
 from django.shortcuts import render,redirect
-from django.views.generic import View,CreateView,FormView,TemplateView
+from django.views.generic import View,CreateView,FormView,TemplateView,UpdateView
 from django.contrib.auth import login,logout,authenticate
 from django.contrib.auth.models import User
-from blogapp.forms import UserRegistrationForm,LoginForm,UserProfileForm,PasswordRestForm
+from blogapp.forms import UserRegistrationForm,LoginForm,UserProfileForm,PasswordRestForm,BlogForm,CommentForm
 from django.contrib import messages
 from django.urls import reverse_lazy
-from blogapp.models import UserProfile
+from blogapp.models import UserProfile,Blogs,Comments
 # Create your views here.
 
 # def index(request):
@@ -53,8 +53,24 @@ class LoginView(FormView):
                 messages.error(request,"invalid credentials")
                 return render(request,self.template_name,{"form":form})
 
-class IndexView(TemplateView):
+class IndexView(CreateView):
+    model= Blogs
+    form_class=BlogForm
+    success_url=reverse_lazy("home")
     template_name = "home.html"
+
+    def form_valid(self,form):
+        form.instance.author=self.request.user
+        self.object=form.save()
+        messages.success(self.request,"post has been saved")
+        return super().form_valid(form)
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        blogs=Blogs.objects.all().order_by("-posted_date")
+        context["blogs"]=blogs
+        comment_form=CommentForm()
+        context["comment_form"]=comment_form
+        return context
 
 
 class CreateUserProfileView(CreateView):
@@ -83,10 +99,56 @@ class PasswordResetView(FormView):
             password2=form.cleaned_data.get("confirm_password")
             user=authenticate(request,username=request.user.username,password=oldpassword)
             if user:
-                
+                user.set_password(password2)
+                user.save()
+                messages.success(request,"password changed")
+                return redirect("signin")
             else:
                 messages.error(request,"invalid credentials")
                 return render(request,self.template_name,{"form":form})
+
+class ProfileUpdateView(UpdateView):
+    model = UserProfile
+    form_class = UserProfileForm
+    template_name = "profile-update.html"
+    success_url = reverse_lazy("home")
+    pk_url_kwarg = "user_id"
+
+    def form_valid(self, form):
+        messages.success(self.request,"Your Profile has been updated successfully")
+        self.object = form.save()
+        return super().form_valid(form)
+
+class ProfilepicUpdateView(UpdateView):
+    model = UserProfile
+    form_class = UserProfileForm
+    template_name = "profilepic-update.html"
+    success_url = reverse_lazy("home")
+    pk_url_kwarg = "user_id"
+
+    def form_valid(self, form):
+        messages.success(self.request, "Your Profile has been updated successfully")
+        self.object = form.save()
+        return super().form_valid(form)
+
+
+
+def add_comment(request,*args,**kwargs):
+    if request.method=="POST":
+        blog_id=kwargs.get("post_id")
+        blog=Blogs.objects.get(id=blog_id)
+        user=request.user
+        comment=request.POST.get("comment")
+        Comments.objects.create(blog=blog,user=user,comment=comment)
+        messages.success(request,"comment has been posted")
+        return redirect("home")
+
+def add_like(request,*args,**kwargs):
+    blog_id=kwargs.get("post_id")
+    blog=Blogs.objects.get(id=blog_id)
+    blog.liked_by.add(request.user)
+    blog.save()
+    return redirect("home")
 
 
 def sign_out(request,*args,**kwargs):

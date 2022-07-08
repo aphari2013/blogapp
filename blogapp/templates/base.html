@@ -26,7 +26,7 @@
                 class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="{%url 'home'%}">Home</a></li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                        data-bs-toggle="dropdown" aria-expanded="false">
@@ -45,16 +45,20 @@
                             <hr class="dropdown-divider">
                         </li>
                         <li><a class="dropdown-item" href="{%url 'password-reset'%}">Change Password</a></li>
+                        <li><a class="dropdown-item" href="{%url 'profile-update' request.user.users.id%}">Update
+                            Profile</a></li>
                         <li class="nav-item"><a class="dropdown-item" href="{%url 'signout'%}">Logout</a></li>
                     </ul>
                 </li>
                 <li class="nav-item"><a class="nav-link" href="#!">About</a></li>
 
                 <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">{{request.user}}</a></li>
-                <div style="width:50px;height:50px;">
+                <div style="width:100%;height:100%;">
                     {%if request.user.users.profile_pic%}
-                    <li class="nav-item"><img src="{{request.user.users.profile_pic.url}}" alt="..." class=""
-                                              style="width:100%;height:100%;">
+                    <li class="nav-item" href="{%url 'profilepic-update' request.user.users.id%}"><img
+                            src="{{request.user.users.profile_pic.url}}" alt="..." class=""
+
+                            style="width:50px;height:50px;">
                         {%endif%}
                     </li>
                 </div>
@@ -63,6 +67,22 @@
     </div>
     </div>
 </nav>
+{%if messages%}
+{%for msg in messages%}
+{%if msg.level == DEFAULT_MESSAGE_LEVELS.SUCCESS%}
+<div class="alert alert-info alert-dismissible fade show" role="alert">
+    <strong>Holy guacamole!</strong> {{msg}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{%endif%}
+{%if msg.level == DEFAULT_MESSAGE_LEVELS.ERROR%}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>Holy guacamole!</strong> {{msg}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{%endif%}
+{%endfor%}
+{%endif%}
 <body>
 <div class="container">
     {%block body_block%}

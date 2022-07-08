@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.forms import ModelForm
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
-from blogapp.models import UserProfile
+from blogapp.models import UserProfile,Blogs,Comments
 
 class UserRegistrationForm(UserCreationForm):
     class Meta:
@@ -30,3 +30,39 @@ class PasswordRestForm(forms.Form):
     old_password=forms.CharField(widget=forms.PasswordInput)
     new_password=forms.CharField(widget=forms.PasswordInput)
     confirm_password=forms.CharField()
+
+
+class BlogForm(ModelForm):
+    class Meta:
+        model=Blogs
+        fields=[
+            "title",
+            "description",
+            "image"
+        ]
+        widgets={
+            "title":forms.TextInput(attrs={"class":"form-control"}),
+            "description":forms.Textarea(attrs={"class":"form-control"}),
+            "image":forms.FileInput(attrs={"class":"form-control"})
+        }
+
+class ImageResetForm(forms.Form):
+    class Meta:
+        model = Blogs
+        fields = [
+            "image"
+        ]
+        widgets = {
+            "image": forms.FileInput(attrs={"class": "form-control"})
+        }
+
+class CommentForm(ModelForm):
+    class Meta:
+        model=Comments
+        fields=[
+            "comment"
+        ]
+        widgets={
+            "comment":forms.TextInput(attrs={"class":"form-control"})
+
+        }
