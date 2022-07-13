@@ -46,14 +46,14 @@ class BlogForm(ModelForm):
             "image":forms.FileInput(attrs={"class":"form-control"})
         }
 
-class ImageResetForm(forms.Form):
+class ImageResetForm(ModelForm):
     class Meta:
-        model = Blogs
+        model = UserProfile
         fields = [
-            "image"
+            "profile_pic"
         ]
         widgets = {
-            "image": forms.FileInput(attrs={"class": "form-control"})
+            "profile_pic": forms.FileInput(attrs={"class": "form-control"})
         }
 
 class CommentForm(ModelForm):

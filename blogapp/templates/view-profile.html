@@ -6,8 +6,8 @@
         <div class="card" style="width: 18rem;">
   <img src="{{request.user.users.profile_pic.url}}" class="card-img-top" alt="...">
   <div class="card-body">
-    <h5 class="card-title">{{request.user}}</h5>
-    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+    <h5 class="card-title" style="color:black;">{{request.user}}</h5>
+    <p class="card-text" style="color:black;">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
   </div>
   <ul class="list-group list-group-flush">
     <li class="list-group-item">Phone {{request.user.users.phone}}</li>
@@ -15,7 +15,7 @@
     <li class="list-group-item">A third item</li>
   </ul>
   <div class="card-body">
-    <a href="#" class="card-link">Card link</a>
+    <a href="#" class="card-link">Follow</a>
     <a href="{%url 'profile-update' request.user.users.id%}" class="card-link">Update Profile</a>
   </div>
 </div>

@@ -2,10 +2,11 @@ from django.shortcuts import render,redirect
 from django.views.generic import View,CreateView,FormView,TemplateView,UpdateView
 from django.contrib.auth import login,logout,authenticate
 from django.contrib.auth.models import User
-from blogapp.forms import UserRegistrationForm,LoginForm,UserProfileForm,PasswordRestForm,BlogForm,CommentForm
+from blogapp.forms import UserRegistrationForm,LoginForm,UserProfileForm,PasswordRestForm,BlogForm,CommentForm,ImageResetForm
 from django.contrib import messages
 from django.urls import reverse_lazy
 from blogapp.models import UserProfile,Blogs,Comments
+
 # Create your views here.
 
 # def index(request):
@@ -121,7 +122,7 @@ class ProfileUpdateView(UpdateView):
 
 class ProfilepicUpdateView(UpdateView):
     model = UserProfile
-    form_class = UserProfileForm
+    form_class = ImageResetForm
     template_name = "profilepic-update.html"
     success_url = reverse_lazy("home")
     pk_url_kwarg = "user_id"
@@ -154,7 +155,6 @@ def add_like(request,*args,**kwargs):
 def sign_out(request,*args,**kwargs):
     logout(request)
     return redirect("signin")
-
 
 
 
